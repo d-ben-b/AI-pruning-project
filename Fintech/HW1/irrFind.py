@@ -7,7 +7,6 @@ def irrFind(cashFlowVec, cashFlowPeriod, compoundPeriod):
     while right - left > eps:
         mid = (left + right) / 2
         NPV = calculate_NPV(mid, cashFlowVec, cashFlowPeriod, compoundPeriod)
-        print(f"left: {left:.4f}, right: {right:.4f}, mid: {mid:.4f}, NPV: {NPV:.4f}")
         if NPV > 0:
             left = mid
         else:
@@ -16,8 +15,20 @@ def irrFind(cashFlowVec, cashFlowPeriod, compoundPeriod):
 
 
 def calculate_NPV(r, cashFlowVec, cashFlowPeriod, compoundPeriod):
-    NPV = 0.0
+    NPV = 0
     for i, cf in enumerate(cashFlowVec):
-        power = i * (compoundPeriod / cashFlowPeriod)
-        NPV += cf / (1.0 + r / compoundPeriod) ** power
+        # Rate per compounding period
+        rate_per_period = r * compoundPeriod / 12
+
+        # Number of compounding periods until this cash flow
+        num_periods = i * cashFlowPeriod / compoundPeriod
+
+        # Calculate present value of this cash flow
+        NPV += cf / ((1 + rate_per_period) ** num_periods)
     return NPV
+
+
+if __name__ == "__main__":
+
+    irr = irrFind([-100, -100, -100, -100, -100, -100, 700], 6, 6)
+    print("Estimated IRR:", irr)
