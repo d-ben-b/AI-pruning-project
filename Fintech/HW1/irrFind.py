@@ -1,4 +1,6 @@
 def irrFind(cashFlowVec, cashFlowPeriod, compoundPeriod):
+    if not error_handle(cashFlowVec, cashFlowPeriod, compoundPeriod):
+        return 0
     left = -0.1
     right = 0.1
     mid = 0
@@ -12,6 +14,19 @@ def irrFind(cashFlowVec, cashFlowPeriod, compoundPeriod):
         else:
             right = mid
     return mid
+
+
+def error_handle(cashFlowVec, cashFlowPeriod, compoundPeriod):
+    if len(cashFlowVec) == 0:
+        # print("Error: cashFlowVec is empty.")
+        return False
+    if cashFlowPeriod <= 0 or compoundPeriod <= 0:
+        # print("Error: cashFlowPeriod and compoundPeriod must be positive.")
+        return False
+    if cashFlowPeriod % compoundPeriod != 0:
+        # print("Error: cashFlowPeriod must be a multiple of compoundPeriod.")
+        return False
+    return True
 
 
 def calculate_NPV(r, cashFlowVec, cashFlowPeriod, compoundPeriod):
@@ -28,7 +43,10 @@ def calculate_NPV(r, cashFlowVec, cashFlowPeriod, compoundPeriod):
     return NPV
 
 
-if __name__ == "__main__":
-
-    irr = irrFind([-100, -100, -100, -100, -100, -100, 700], 6, 6)
+def _cli():
+    irr = irrFind([-100, -100, -100, -100, -100, -100, 700], 6, 1)
     print("Estimated IRR:", irr)
+
+
+if __name__ == "__main__":
+    _cli()
