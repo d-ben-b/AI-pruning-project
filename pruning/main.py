@@ -1,5 +1,6 @@
 import torch
 
+
 def main():
     print("Hello from pruning!")
     print(torch.__version__, torch.cuda.is_available())
