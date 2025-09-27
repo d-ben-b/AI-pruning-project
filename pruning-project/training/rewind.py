@@ -3,11 +3,21 @@ from pathlib import Path
 
 
 def save_rewind_point(model, optimizer, path):
-    Path(path).parent.mkdir(parents=True, exist_ok=True)
-    # TODO: 存 model.state_dict() & optimizer.state_dict()
-    pass
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    torch.save(
+        {
+            "model": model.state_dict(),
+            "optimizer": optimizer.state_dict(),
+        },
+        path,
+    )
+    print(f"[Rewind] Saved checkpoint to {path}")
 
 
 def load_rewind_point(model, optimizer, path, map_location=None):
-    # TODO: 載入 state dicts
-    pass
+    checkpoint = torch.load(path, map_location=map_location)
+    model.load_state_dict(checkpoint["model"])
+    optimizer.load_state_dict(checkpoint["optimizer"])
+    print(f"[Rewind] Loaded checkpoint from {path}")
+    return model, optimizer

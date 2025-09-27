@@ -36,7 +36,7 @@ def main():
 
         # Save rewind point
         rewind_path = os.path.join(args.out, f"rewind_{args.rewind_tag}.pth")
-        optimizer = torch.optim.SGD(model.parameters(), lr=0.0)  # dummy optimizer
+        optimizer = torch.optim.Adam(model.parameters(), lr=0.0)  # dummy optimizer
         save_rewind_point(model, optimizer, rewind_path)
         load_rewind_point(model, optimizer, rewind_path, map_location=args.device)
 
