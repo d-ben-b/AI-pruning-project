@@ -28,9 +28,7 @@ def main():
     else:
         archs = [args.arch]
     for arch in archs:
-        model = timm.create_model(
-            arch, pretrained=not args.no_pretrained, num_classes=1000
-        )
+        model = timm.create_model(arch, pretrained=args.pretrained, num_classes=1000)
         model.to(args.device)
         print(f"Model {arch} created.")
 
