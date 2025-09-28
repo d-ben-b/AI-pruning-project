@@ -2,8 +2,8 @@
   "python-envs.pythonProjects": [
     {
       "path": "pruning_project/.venv",
-      "envManager": "ms-python.python:venv",
-      "packageManager": "ms-python.python:pip"
+      "envManager": "ms-python.python:conda",
+      "packageManager": "ms-python.python:conda"
     }
   ]
 }
