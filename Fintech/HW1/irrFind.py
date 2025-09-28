@@ -1,3 +1,6 @@
+import sys
+
+
 def irrFind(cashFlowVec, cashFlowPeriod, compoundPeriod):
     if not error_handle(cashFlowVec, cashFlowPeriod, compoundPeriod):
         return 0
@@ -13,6 +16,7 @@ def irrFind(cashFlowVec, cashFlowPeriod, compoundPeriod):
             left = mid
         else:
             right = mid
+    # print(f"{mid:.4f}")
     return mid
 
 
@@ -43,10 +47,19 @@ def calculate_NPV(r, cashFlowVec, cashFlowPeriod, compoundPeriod):
     return NPV
 
 
+def main():
+    for i, input_line in enumerate(sys.stdin.readlines()):
+        input_numbers = [int(x) for x in input_line.strip().split()]
+        cashFlowPeriod, compoundPeriod = input_numbers[-2:]
+        cashFlowVec = input_numbers[:-2]
+        irr = irrFind(cashFlowVec, cashFlowPeriod, compoundPeriod)
+        # print(f"{round(irr * 100, 4):.4f}")
+
+
 def _cli():
     irr = irrFind([-100, -100, -100, -100, -100, -100, 700], 6, 1)
-    print("Estimated IRR:", irr)
+    # print("Estimated IRR:", irr)
 
 
 if __name__ == "__main__":
-    _cli()
+    main()
