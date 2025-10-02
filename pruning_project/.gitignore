@@ -22,4 +22,5 @@ dist/
 
 # Test artifacts
 .pytest_cache/
+checkpoints
 .coverage
