@@ -1,11 +1,4 @@
 {
-  "python-envs.pythonProjects": [
-    {
-      "path": "pruning_project/.venv",
-      "envManager": "ms-python.python:conda",
-      "packageManager": "ms-python.python:conda"
-    }
-  ],
   "workbench.editorAssociations": {
     "*.copilotmd": "vscode.markdown.preview.editor",
     "*.java": "default",
@@ -13,5 +6,12 @@
     "*.vue": "default",
     "file:/**/*.csv": "jupyter-data-wrangler",
     "file:/**/*.xlsx": "jupyter-data-wrangler"
-  }
+  },
+  "python-envs.pythonProjects": [
+    {
+      "path": "pruning_project/.venv",
+      "envManager": "ms-python.python:venv",
+      "packageManager": "ms-python.python:pip"
+    }
+  ]
 }

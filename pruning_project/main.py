@@ -3,7 +3,7 @@ from pruning.nm_pruner import NMPruner
 from training.trainer import finetune
 from training.rewind import save_rewind_point, load_rewind_point
 from evaluation.eval_utils import evaluate
-from logging.logger import log_experiment, log_per_layer, plot_results
+from log.logger import log_experiment, log_per_layer, plot_results
 from datasets.loaders import build_loaders
 import timm
 import os
