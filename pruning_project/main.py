@@ -45,7 +45,7 @@ def main():
         baseline_metrics = evaluate(model, val_loader, device=args.device)
         print(f"Baseline Top-1: {baseline_metrics['top1']:.2f}%")
         print(f"Baseline Top-5: {baseline_metrics['top5']:.2f}%")
-        baseline_acc = baseline_metrics["top1"]
+        # baseline_acc = baseline_metrics["top1"]
 
         # Initialize pruner and prune
         pruner = NMPruner(model, N=args.n, M=args.m)

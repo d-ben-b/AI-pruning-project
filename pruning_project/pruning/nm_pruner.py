@@ -5,6 +5,12 @@ import torch.nn.functional as F
 
 class NMPruner:
     def __init__(self, model: nn.Module, N: int, M: int):
+        """
+        Args:
+            model: 要被剪枝的模型 (通常是 DeiT / ViT)
+            N: 保留的權重數 (ex. 2)
+            M: group 大小 (ex. 4)
+        """
         self.model = model
         self.N = N
         self.M = M
