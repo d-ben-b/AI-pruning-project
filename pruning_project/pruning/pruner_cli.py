@@ -40,7 +40,7 @@ def _cli():
     visualize_weights_before_pruning(
         wrapped, save_root=os.path.join(save_dir, "before_pruning")
     )
-    pruner = NMPruner(wrapped, N=2, M=4)
+    pruner = NMPruner(wrapped, N=2, M=4, targets=["mlp.fc1"])
     pruner.compute_masks()
 
     # ====== Apply mask ======

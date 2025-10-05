@@ -4,7 +4,19 @@ import torch.nn.functional as F
 
 
 class NMPruner:
-    def __init__(self, model: nn.Module, N: int, M: int):
+
+    def __init__(
+        self,
+        model: nn.Module,
+        N: int,
+        M: int,
+        targets=[
+            "attn.qkv",
+            "attn.proj",
+            "mlp.fc1",
+            "mlp.fc2",
+        ],
+    ):
         """
         Args:
             model: 要被剪枝的模型 (通常是 DeiT / ViT)
@@ -15,6 +27,7 @@ class NMPruner:
         self.N = N
         self.M = M
         self.masks = {}
+        self.prune_targets = targets
 
     def compute_masks(self):
         """
@@ -23,7 +36,7 @@ class NMPruner:
         """
         print(f"🔧 Computing {self.N}:{self.M} masks...")
         for name, param in self.model.named_parameters():
-            if any(k in name for k in ["attn.qkv", "attn.proj", "mlp.fc1", "mlp.fc2"]):
+            if any(k in name for k in self.prune_targets):
                 W = param.data
                 mask = self._nm_mask(W, self.N, self.M)
                 self.masks[name] = mask.to(W.device)
