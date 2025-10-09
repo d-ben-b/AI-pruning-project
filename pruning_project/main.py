@@ -15,7 +15,9 @@ def main():
     exp_csv = Path(args.out) / "experiments.csv"
     per_csv = Path(args.out) / "per_layer_stats.csv"
     args = get_config()
+
     # 1. 建立模型 (用 timm)
+    # === 模型選擇 ===
     if args.arch == "all":
         archs = [
             "deit_tiny_patch16_224",
@@ -27,7 +29,12 @@ def main():
         ]
     else:
         archs = [args.arch]
+
+    # === 要分別測試剪的四種 Layer ===
+    prune_targets = ["attn.qkv", "attn.proj", "mlp.fc1", "mlp.fc2"]
+
     for arch in archs:
+        print(f"\n🚀 Model {arch} start pruning experiments...")
         model = timm.create_model(arch, pretrained=args.pretrained, num_classes=1000)
         model.to(args.device)
         print(f"Model {arch} created.")
@@ -45,56 +52,77 @@ def main():
         baseline_metrics = evaluate(model, val_loader, device=args.device)
         print(f"Baseline Top-1: {baseline_metrics['top1']:.2f}%")
         print(f"Baseline Top-5: {baseline_metrics['top5']:.2f}%")
-        # baseline_acc = baseline_metrics["top1"]
+
+        # === baseline 儲存 ===
+        base_ckpt = Path(args.out) / f"{arch}_baseline.pth"
+        torch.save(model.state_dict(), base_ckpt)
+        print(f"💾 Saved baseline model to {base_ckpt}")
 
         # Initialize pruner and prune
-        pruner = NMPruner(model, N=args.n, M=args.m)
-        pruner.compute_masks()
-        pruner.apply_once()
-        pruner.attach_gradient_hooks()
-        overall_density, layer_stats = pruner.density_stats()
-        print(f"Overall density after pruning: {overall_density:.4f}")
-        log_per_layer(layer_stats, args.out)
+        for target in prune_targets:
+            print(f"\n============================")
+            print(f"✂️ Pruning target: {target}")
+            print(f"============================")
 
-        # Check N:M compliance
-        compliance = pruner.nm_compliance()
-        print("N:M compliance per layer:", compliance)
+            model.load_state_dict(torch.load(base_ckpt, map_location=args.device))
 
-        # Rewind to the specified point
-        load_rewind_point(model, tag=args.rewind_tag)
-        print(f"Model rewound to {args.rewind_tag} state.")
+            pruner = NMPruner(model, N=args.n, M=args.m, targets=[target])
+            pruner.compute_masks()
+            pruner.apply_once()
+            pruner.attach_gradient_hooks()
 
-        # Finetune
-        finetune(
-            model,
-            train_loader,
-            val_loader,
-            epochs=args.finetune_epochs,
-            lr=args.finetune_lr,
-            device=args.device,
-            out_dir=args.out,
-        )
+            # Check density
+            overall_density, layer_stats = pruner.density_stats()
+            print(f"Overall density after pruning: {overall_density:.4f}")
+            log_per_layer(layer_stats, args.out)
 
-        # Final evaluation
-        final_metrics = evaluate(model, val_loader, device=args.device)
-        print(f"Final Top-1 after finetuning: {final_metrics['top1']:.2f}%")
+            # Check N:M compliance
+            compliance = pruner.nm_compliance()
+            print("N:M compliance per layer:", compliance)
 
-        # Log experiment results
-        log_per_layer(per_csv, layer_stats)
-        log_experiment(
-            exp_csv,
-            {
-                "arch": arch,
-                "baseline_top1": baseline_metrics["top1"],
-                "final_top1": final_metrics["top1"],
-                "density": overall_density,
-                "n": args.n,
-                "m": args.m,
-                "epochs": args.finetune_epochs,
-                "lr": args.finetune_lr,
-            },
-        )
+            # Save pruned model
+            pruned_ckpt = (
+                Path(args.out) / f"{arch}_{target.replace('.', '_')}_pruned.pth"
+            )
+            torch.save(model.state_dict(), pruned_ckpt)
+            print(f"💾 Saved pruned model to {pruned_ckpt}")
+
+            # Rewind to the specified point
+            load_rewind_point(model, tag=args.rewind_tag)
+            print(f"Model rewound to {args.rewind_tag} state.")
+
+            # Finetune
+            finetune(
+                model,
+                train_loader,
+                val_loader,
+                epochs=args.finetune_epochs,
+                lr=args.finetune_lr,
+                device=args.device,
+                out_dir=args.out,
+            )
+
+            # Final evaluation
+            final_metrics = evaluate(model, val_loader, device=args.device)
+            print(f"Final Top-1 after finetuning: {final_metrics['top1']:.2f}%")
+
+            # Log experiment results
+            log_per_layer(per_csv, layer_stats)
+            log_experiment(
+                exp_csv,
+                {
+                    "arch": arch,
+                    "baseline_top1": baseline_metrics["top1"],
+                    "final_top1": final_metrics["top1"],
+                    "density": overall_density,
+                    "n": args.n,
+                    "m": args.m,
+                    "epochs": args.finetune_epochs,
+                    "lr": args.finetune_lr,
+                },
+            )
         plot_results(args.out)
+        print(f"\n🎉 Completed all layer pruning tests for {arch}.")
 
 
 if __name__ == "__main__":
