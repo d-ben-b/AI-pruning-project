@@ -4,3 +4,4 @@ EAI
 .venv
 __pycache__
 *.pth
+*.csv

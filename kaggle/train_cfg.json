@@ -4,7 +4,7 @@
   "encoder": "efficientnet-b5",
   "num_classes": 16,
   "epochs": 80,
-  "batch_size": 8,
+  "batch_size": 4,
   "lr": 0.0001,
   "weight_decay": 1e-05,
   "num_workers": 2,
@@ -12,20 +12,20 @@
   "use_amp": true,
   "seed": 42,
   "train_resize": [
-    576,
-    576
+    800,
+    800
   ],
   "train_crop": [
-    512,
-    512
+    768,
+    768
   ],
   "val_size": [
-    512,
-    512
+    768,
+    768
   ],
   "save_dir": "kaggle",
   "patience": 10,
   "eval_1024": false,
-  "resume_ckpt": "kaggle/Unet++best_model.pth",
+  "resume_ckpt": "",
   "resume_strict": false
 }

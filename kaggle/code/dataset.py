@@ -35,7 +35,7 @@ class SegDataset(Dataset):
 
 
 def get_transforms(
-    mode="train", train_resize=(576, 576), train_crop=(512, 512), val_size=(512, 512)
+    mode="train", train_resize=(800, 800), train_crop=(768, 768), val_size=(768, 768)
 ):
     if mode == "train":
         return A.Compose(

@@ -2,9 +2,9 @@ import os, argparse, hashlib, subprocess, shlex
 import numpy as np, pandas as pd, torch, cv2
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
-from src.datasets import SegDataset, get_transforms
-from src.models import build_model
-from src.utils import rle_encode
+from code.dataset import SegDataset, get_transforms
+from code.model import build_model
+from code.utils import rle_encode
 
 
 def parse_args():
@@ -16,7 +16,7 @@ def parse_args():
     ap.add_argument("--ckpt", type=str, required=True)
     ap.add_argument("--batch_size", type=int, default=8)
     ap.add_argument("--num_workers", type=int, default=2)
-    ap.add_argument("--device", type=str, default="cuda")
+    ap.add_argument("--device", type=str, default="cuda:1")
     ap.add_argument("--orig_h", type=int, default=1024)
     ap.add_argument("--orig_w", type=int, default=1024)
     ap.add_argument("--hflip_tta", action="store_true")

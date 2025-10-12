@@ -29,7 +29,7 @@ def parse_args():
     ap.add_argument("--num_classes", type=int, default=16)
 
     ap.add_argument("--epochs", type=int, default=40)
-    ap.add_argument("--batch_size", type=int, default=8)
+    ap.add_argument("--batch_size", type=int, default=4)
     ap.add_argument("--lr", type=float, default=1e-4)
     ap.add_argument("--weight_decay", type=float, default=1e-5)
     ap.add_argument("--num_workers", type=int, default=2)
@@ -38,9 +38,9 @@ def parse_args():
     ap.add_argument("--use_amp", action="store_true")
     ap.add_argument("--seed", type=int, default=42)
 
-    ap.add_argument("--train_resize", type=int, nargs=2, default=[576, 576])
-    ap.add_argument("--train_crop", type=int, nargs=2, default=[512, 512])
-    ap.add_argument("--val_size", type=int, nargs=2, default=[512, 512])
+    ap.add_argument("--train_resize", type=int, nargs=2, default=[800, 800])
+    ap.add_argument("--train_crop", type=int, nargs=2, default=[768, 768])
+    ap.add_argument("--val_size", type=int, nargs=2, default=[768, 768])
 
     ap.add_argument("--save_dir", type=str, default="kaggle")
     ap.add_argument("--patience", type=int, default=10)
@@ -181,7 +181,7 @@ def main():
     sch = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(
         opt, T_0=10, T_mult=2, eta_min=1e-6
     )
-    scaler = torch.cuda.amp.GradScaler(enabled=("cuda" in device and args.use_amp))
+    scaler = torch.amp.GradScaler(enabled=("cuda" in device and args.use_amp))
 
     # 續訓
     start_epoch = 1
