@@ -1,9 +1,9 @@
 # test/test_train_utils.py
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-from kaggle.code.train_utils import train_one_epoch, validate, calculate_iou
-from kaggle.code.loss import combined_loss
-from kaggle.code.model import build_model
+from kaggle.scr.train_utils import train_one_epoch, validate, calculate_iou
+from kaggle.scr.loss import combined_loss
+from kaggle.scr.model import build_model
 
 
 def test_training_utils():

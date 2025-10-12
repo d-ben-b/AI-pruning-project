@@ -1,6 +1,6 @@
 # kaggle/test/test_model.py
 import torch
-from kaggle.code.model import build_model
+from kaggle.scr.model import build_model
 
 
 def test_model_forward():

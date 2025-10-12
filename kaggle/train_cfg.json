@@ -1,0 +1,31 @@
+{
+  "data_root": "kaggle/data",
+  "model_name": "Unet++",
+  "encoder": "efficientnet-b5",
+  "num_classes": 16,
+  "epochs": 80,
+  "batch_size": 8,
+  "lr": 0.0001,
+  "weight_decay": 1e-05,
+  "num_workers": 2,
+  "device": "cuda:0",
+  "use_amp": true,
+  "seed": 42,
+  "train_resize": [
+    576,
+    576
+  ],
+  "train_crop": [
+    512,
+    512
+  ],
+  "val_size": [
+    512,
+    512
+  ],
+  "save_dir": "kaggle",
+  "patience": 10,
+  "eval_1024": false,
+  "resume_ckpt": "kaggle/Unet++best_model.pth",
+  "resume_strict": false
+}

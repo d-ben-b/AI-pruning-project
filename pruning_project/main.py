@@ -12,9 +12,9 @@ from pathlib import Path
 
 
 def main():
+    args = get_config()
     exp_csv = Path(args.out) / "experiments.csv"
     per_csv = Path(args.out) / "per_layer_stats.csv"
-    args = get_config()
 
     # 1. 建立模型 (用 timm)
     # === 模型選擇 ===
@@ -74,7 +74,9 @@ def main():
             # Check density
             overall_density, layer_stats = pruner.density_stats()
             print(f"Overall density after pruning: {overall_density:.4f}")
-            log_per_layer(layer_stats, args.out)
+            log_per_layer(
+                layer_stats, args.out, arch=arch, n=args.n, m=args.m, tag=target
+            )
 
             # Check N:M compliance
             compliance = pruner.nm_compliance()
@@ -88,7 +90,7 @@ def main():
             print(f"💾 Saved pruned model to {pruned_ckpt}")
 
             # Rewind to the specified point
-            load_rewind_point(model, tag=args.rewind_tag)
+            load_rewind_point(model, optimizer, rewind_path, map_location=args.device)
             print(f"Model rewound to {args.rewind_tag} state.")
 
             # Finetune
@@ -100,6 +102,9 @@ def main():
                 lr=args.finetune_lr,
                 device=args.device,
                 out_dir=args.out,
+                pruner=pruner,
+                arch=arch,
+                target=target,
             )
 
             # Final evaluation
@@ -107,7 +112,9 @@ def main():
             print(f"Final Top-1 after finetuning: {final_metrics['top1']:.2f}%")
 
             # Log experiment results
-            log_per_layer(per_csv, layer_stats)
+            log_per_layer(
+                layer_stats, args.out, arch=arch, n=args.n, m=args.m, tag=target
+            )
             log_experiment(
                 exp_csv,
                 {

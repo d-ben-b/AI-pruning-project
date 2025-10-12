@@ -1,6 +1,6 @@
 # test/test_dataset.py
 import torch
-from kaggle.code.dataset import SegDataset, get_transforms
+from kaggle.scr.dataset import SegDataset, get_transforms
 import cv2
 import numpy as np
 import os

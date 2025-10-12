@@ -1,6 +1,6 @@
 # test/test_loss.py
 import torch
-from kaggle.code.loss import DiceLoss, FocalLoss, combined_loss
+from kaggle.scr.loss import DiceLoss, FocalLoss, combined_loss
 
 
 def test_loss_functions():

@@ -44,20 +44,23 @@ class NMPruner:
                     f"  - {name}: {mask.sum().item():.0f}/{mask.numel()} weights kept"
                 )
 
-    def apply_once(self):
+    def apply_once(self, verbose=False):
         """
         將已經算好的 mask 套用到模型的權重上（in-place）
         讓被剪掉的權重歸零。
         """
-        print("✂️  Applying masks to weights...")
+        if verbose:
+            print("✂️  Applying masks to weights...")
         for name, param in self.model.named_parameters():
             if name in self.masks:
                 mask = self.masks[name]
                 param.data.mul_(mask)  # in-place mask
                 kept = mask.sum().item()
                 total = mask.numel()
-                print(f"  - {name}: kept {kept}/{total} ({kept/total:.2%})")
-        print("✅  All masks applied.\n")
+                if verbose:
+                    print(f"  - {name}: kept {kept}/{total} ({kept/total:.2%})")
+        if verbose:
+            print("✅  All masks applied.")
 
     def attach_gradient_hooks(self):
         """
