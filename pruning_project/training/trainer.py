@@ -6,6 +6,7 @@ from termcolor import colored
 from evaluation.eval_utils import evaluate
 
 
+# TODO: need to add patient(earily stop)
 def finetune(
     model,
     train_loader,
