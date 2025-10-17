@@ -7,6 +7,7 @@ import torch.optim as optim
 from torch.utils.data import random_split, DataLoader
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from termcolor import colored
+import segmentation_models_pytorch as smp
 from torchvision.models.segmentation import deeplabv3_resnet50
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -40,7 +41,14 @@ val_loader = DataLoader(val_subset, batch_size=BATCH_SIZE, shuffle=False, num_wo
 # ==========================================================
 # 模型、Loss、Optimizer、Scheduler
 # ==========================================================
-model = deeplabv3_resnet50(weights=None, num_classes=NUM_CLASSES).to(DEVICE)
+# model = deeplabv3_resnet50(weights=None, num_classes=NUM_CLASSES).to(DEVICE)
+model = smp.UnetPlusPlus(
+    encoder_name="resnet101",  # backbone
+    encoder_weights="imagenet",  # 使用 ImageNet 預訓練
+    in_channels=3,  # RGB input
+    classes=NUM_CLASSES,  # segmentation 類別數
+).to(DEVICE)
+
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=LR)
 scheduler = CosineAnnealingLR(optimizer, T_max=EPOCHS, eta_min=1e-6)
@@ -80,7 +88,8 @@ for epoch in range(EPOCHS):
     ):
         imgs, masks = imgs.to(DEVICE), masks.to(DEVICE)
         optimizer.zero_grad()
-        outputs = model(imgs)["out"]
+        # outputs = model(imgs)["out"]
+        outputs = model(imgs)
         loss = criterion(outputs, masks)
         loss.backward()
         optimizer.step()
@@ -99,7 +108,8 @@ for epoch in range(EPOCHS):
             val_loader, desc=f"Val {epoch+1}/{EPOCHS}", colour="MAGENTA", leave=False
         ):
             imgs, masks = imgs.to(DEVICE), masks.to(DEVICE)
-            outputs = model(imgs)["out"]
+            # outputs = model(imgs)["out"]
+            outputs = model(imgs)
             miou = compute_iou(outputs.cpu(), masks.cpu(), NUM_CLASSES)
             miou_scores.append(miou)
 
