@@ -2,7 +2,7 @@
   "workbench.editorAssociations": {
     "*.copilotmd": "vscode.markdown.preview.editor",
     "*.java": "default",
-    "*.csv": "jupyter-data-wrangler",
+    "*.csv": "gc-excelviewer-csv-editor",
     "*.vue": "default",
     "file:/**/*.csv": "jupyter-data-wrangler",
     "file:/**/*.xlsx": "jupyter-data-wrangler"

@@ -6,7 +6,6 @@ from termcolor import colored
 from evaluation.eval_utils import evaluate
 
 
-# TODO: need to add patient(earily stop)
 def finetune(
     model,
     train_loader,
@@ -18,6 +17,8 @@ def finetune(
     pruner=None,
     arch=None,
     target=None,
+    patience=5,  # ✅ 新增：early stop 等待次數
+    min_delta=0.01,  # ✅ 新增：最小改善幅度 (以 top1 為準)
 ):
     """
     Fine-tune model with optional N:M pruning constraint.
@@ -26,6 +27,7 @@ def finetune(
       - Cosine LR scheduler
       - tqdm progress bar (blue)
       - Per-epoch validation + summary
+      - Early stopping (patience & min_delta)
     """
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
@@ -33,6 +35,7 @@ def finetune(
 
     best_top1 = 0.0
     best_epoch = -1
+    patience_counter = 0
 
     print(colored("🚀 Starting finetuning...", "cyan"))
 
@@ -84,18 +87,28 @@ def finetune(
         top1 = val_metrics.get("top1", 0)
         top5 = val_metrics.get("top5", 0)
 
-        if top1 > best_top1:
+        improved = top1 - best_top1 > min_delta
+
+        if improved:
             best_top1 = top1
             best_epoch = epoch + 1
-            filename = (
-                f"{arch}_{target.replace('.', '_')}_best.pth"
-                if arch and target
-                else "best_model.pth"
-            )
+            patience_counter = 0
+
+            if arch and target:
+                # 支援多層剪枝，例如 ["mlp.fc1", "mlp.fc2"]
+                target_str = (
+                    "_".join([t.replace(".", "_") for t in target])
+                    if isinstance(target, list)
+                    else target.replace(".", "_")
+                )
+                filename = f"{arch}_{target_str}_best.pth"
+            else:
+                filename = "best_model.pth"
             save_path = os.path.join(out_dir, filename)
             torch.save(model.state_dict(), save_path)
             print(f"💾 Saved best model to {save_path}")
-
+        else:
+            patience_counter += 1
         print(
             colored(
                 f"\n[Epoch {epoch+1:02d}/{epochs}] "
@@ -104,6 +117,10 @@ def finetune(
                 "cyan",
             )
         )
+        # === Early stop 條件 ===
+        if patience_counter >= patience:
+            print(colored(f"⏹️ Early stopping at epoch {epoch+1}", "yellow"))
+            break
 
     print(
         colored(
