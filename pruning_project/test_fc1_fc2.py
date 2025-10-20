@@ -92,7 +92,7 @@ def main():
         print(f"Model rewound to {args.rewind_tag} state.")
 
         # Finetune
-        finetune(
+        current_epoch = finetune(
             model,
             train_loader,
             val_loader,
@@ -123,7 +123,9 @@ def main():
                 "n": args.n,
                 "m": args.m,
                 "epochs": args.finetune_epochs,
+                "early_stop_epoch": current_epoch,
                 "lr": args.finetune_lr,
+                "tag": prune_targets,
             },
         )
         plot_results(args.out)

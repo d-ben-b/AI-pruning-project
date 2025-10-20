@@ -119,7 +119,13 @@ def finetune(
         )
         # === Early stop 條件 ===
         if patience_counter >= patience:
-            print(colored(f"⏹️ Early stopping at epoch {epoch+1}", "yellow"))
+            print(
+                colored(
+                    f"⏹️ Early stopping triggered at epoch {epoch+1}. "
+                    f"Best Top-1 = {best_top1:.2f}% (at epoch {best_epoch})",
+                    "yellow",
+                )
+            )
             break
 
     print(
@@ -128,3 +134,5 @@ def finetune(
             "green",
         )
     )
+
+    return best_epoch
