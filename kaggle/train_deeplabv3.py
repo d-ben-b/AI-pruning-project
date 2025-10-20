@@ -136,7 +136,9 @@ for epoch in range(EPOCHS):
     # 儲存最佳模型
     if mean_miou > best_miou:
         best_miou = mean_miou
-        torch.save(model.state_dict(), os.path.join(SAVE_PATH, "best_deeplabv3.pth"))
+        torch.save(
+            model.state_dict(), os.path.join(SAVE_PATH, "UnetPlusPlus_best_.pth")
+        )
         print(colored(f"✅ Saved new best model (mIoU={best_miou:.4f})", "green"))
 
 print(colored(f"Training complete! Best mIoU={best_miou:.4f}", "yellow"))
