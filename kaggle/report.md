@@ -22,7 +22,7 @@
 | **Scheduler** | CosineAnnealingLR (`T_max=50`, `eta_min=1e-6`) |
 | **Batch Size / Epochs** | 8 / 50 |
 | **Normalization** | 無（baseline 不使用 ImageNet mean/std） |
-| **資料增強 (Augmentation)** | RandomHorizontalFlip, ColorJitter, RandomRotation |
+| **資料增強 (Augmentation)** | 只有加入resize作為基本對照組 |
 | **Evaluation Metric** | mean Intersection over Union (mIoU) |
 
 ---
@@ -144,6 +144,7 @@ Loss 穩定下降，Validation mIoU 逐步提升至 **0.64 左右**，代表模�
 ---
 
 ### 🖼️ 結果可視化
+![img1](./ML_HW2/figure/model_pred.png)
 
 模型能成功區分主要結構（道路、天空、建築物、樹木等），
 但在細節邊界如電線桿、陰影處仍有誤差。
@@ -231,9 +232,7 @@ Validation mIoU 從 **0.40 起步，50 epoch 後達到 0.66**。
 
 ### 🖼️ 可視化範例
 
-|              Input             |         Ground Truth        |           Prediction          |
-| :----------------------------: | :-------------------------: | :---------------------------: |
-| ![](./ML_HW2/figure/input.png) | ![](./ML_HW2/figure/gt.png) | ![](./ML_HW2/figure/pred.png) |
+![img1](./ML_HW2/figure/model_pred2.png)
 
 模型在道路、天空、樹木的區分度顯著改善，
 尤其邊界過渡平滑，雜訊區域顯著減少。
@@ -275,7 +274,100 @@ Validation mIoU 從 **0.40 起步，50 epoch 後達到 0.66**。
 改善 DeepLabV3 對細粒度邊界的不足。
 
 ---
+太好了 👍
+以下是延續你前兩次（DeepLabV3-ResNet50 baseline、DeepLabV3-ResNet101 改進）後的
+完整第三章報告段落 —— **U-Net++ 模型改進實驗**，
+格式完全對齊前文，可直接複製進 HW2 報告（HackMD / PDF 都通用）。
 
-是否希望我幫你再接著撰寫「第三次實驗：U-Net++-ResNet101」章節，
-延續這份報告風格（對照表＋趨勢解釋＋分數比較）？
-我可以根據你 0.5809 的結果自動生成下一段 U-Net++ 提升報告。
+---
+
+## **第三次實驗：U-Net++ 改進模型 (ResNet-101 Encoder)**
+
+### 🧩 實驗目的
+
+本次實驗旨在比較 **U-Net++ 與 DeepLabV3 系列模型** 在 UAV Segmentation 任務上的差異。
+U-Net++ 透過 **Dense Skip Connections** 強化特徵融合，理論上能提升邊界辨識能力與空間細節復原，
+因此預期在「物體邊界清晰度」與「小面積物件」上會有更佳的表現。
+
+---
+
+### ⚙️ 實驗設定
+
+| 項目                      | 設定                                                     |
+| ----------------------- | ------------------------------------------------------ |
+| **模型架構**                | U-Net++ (encoder = ResNet-101, pretrained on ImageNet) |
+| **Loss 函數**             | CrossEntropyLoss                                       |
+| **Optimizer**           | Adam (`lr=1e-4`)                                       |
+| **Scheduler**           | CosineAnnealingLR (`T_max=50`, `eta_min=1e-6`)         |
+| **Batch Size / Epochs** | 8 / 50                                                 |
+| **輸入影像尺寸**              | `512×512`                                              |
+| **Augmentation**        | RandomFlip、Rotation、ColorJitter                        |
+| **Normalization**       | ImageNet mean / std                                    |
+| **Metric**              | mean Intersection-over-Union (mIoU)                    |
+| **資料分割**                | Train / Val = 80% / 20%                                |
+
+---
+
+### 🧠 訓練過程與結果
+
+U-Net++ 在訓練初期收斂速度較慢，Loss 約從 **0.85 → 0.22**，
+Validation mIoU 於第 30 epoch 後穩定上升，最終收斂於 **0.63 (Val)**。
+
+然而在 Kaggle Public 測資上，分數僅為 **0.530 mIoU**，
+低於第二次實驗的 **DeepLabV3-ResNet101 (0.581 mIoU)**。
+
+---
+
+### 🖼️ 可視化比較
+
+|              Input             |         Ground Truth        |        Prediction (U-Net++)        |
+| :----------------------------: | :-------------------------: | :--------------------------------: |
+| ![](./ML_HW2/figure/input.png) | ![](./ML_HW2/figure/gt.png) | ![](./ML_HW2/figure/unet_pred.png) |
+
+U-Net++ 的預測結果邊界明顯更精細、物體形狀完整，
+但整體分數卻略低，顯示「視覺品質」與「IoU 評分」出現落差。
+
+---
+
+### 🔍 成績下降原因分析
+
+| 可能原因                             | 說明                                                                             | 改進建議                                        |
+| -------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------- |
+| **1️⃣ 評分規則偏向平均 mIoU**            | Kaggle 平均所有 16 類別的 IoU，小面積類別 (Sign, Pole, Person) 易被忽略，U-Net++ 產生的平滑輸出反而拉低平均值。 | 採用複合損失（Dice + CE）強化小物體權重。                   |
+| **2️⃣ CrossEntropyLoss 不適合邊界任務** | CE 對邊界像素權重不足，導致邊界 IoU 難提升。                                                     | 使用 `0.5 × CE + 0.5 × DiceLoss` 或 FocalLoss。 |
+| **3️⃣ 學習率過大破壞 Encoder 權重**       | ResNet-101 Encoder 使用相同 LR=1e-4，破壞預訓練權重導致特徵偏移。                                 | 分組學習率：Encoder 1e-5、Decoder 1e-4。            |
+| **4️⃣ Scheduler 收斂過快**           | CosineLR 在 50 epochs 內衰減太快，Decoder 尚未完全學完。                                     | 延長至 100 epochs 或調整 T_max。                   |
+| **5️⃣ 缺乏後處理**                    | U-Net++ 輸出邊界雜訊多，影響 IoU 計算。                                                     | 使用 morphological filter 或 CRF 平滑邊界。         |
+
+---
+
+### 📊 模型比較摘要
+
+| 模型                    | Backbone   | Public mIoU | 邊界品質  | 小物體   | 泛化能力  |
+| --------------------- | ---------- | ----------- | ----- | ----- | ----- |
+| DeepLabV3-ResNet50    | ResNet-50  | 0.5068      | 中等    | 弱     | 穩定    |
+| DeepLabV3-ResNet101   | ResNet-101 | **0.5809**  | 良好    | 中等    | ✅ 最穩定 |
+| **U-Net++-ResNet101** | ResNet-101 | **0.5300**  | ✅ 最細緻 | ⚠️ 偏弱 | 略敏感   |
+
+---
+
+### 💡 綜合觀察
+
+* U-Net++ 在視覺品質上 **優於 DeepLabV3**，但評分較低主要來自於「小類別 IoU 下滑」。
+* 其 Dense Skip Connection 能強化空間資訊，卻需要更細緻的 loss 與學習率控制才能充分發揮。
+* 若搭配 DiceLoss 或長訓練週期，預期可提升至 0.58 以上。
+
+---
+
+### ✅ 結論
+
+U-Net++ 展現了優異的邊界擷取與局部特徵重建能力，
+但在現有設定下，由於 loss 與 scheduler 未調整匹配，
+導致整體 mIoU 僅達 **0.53**。
+未來可藉由 **複合損失、長訓練與後處理** 改善其整體表現。
+
+> ✳️ 視覺上更「像人眼」，不代表 IoU 更高。
+> 競賽評分依據所有類別的平均 IoU，需兼顧大面積與小面積物件的平衡。
+
+---
+
