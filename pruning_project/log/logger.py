@@ -34,8 +34,10 @@ def log_experiment(exp_csv, row_dict):
         "density",
         "n",
         "m",
+        "early_stop_epoch",
         "epochs",
         "lr",
+        "tag",
     ]
 
     with open(exp_csv, "a", newline="") as f:

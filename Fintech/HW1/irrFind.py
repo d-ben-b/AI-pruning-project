@@ -33,16 +33,26 @@ def error_handle(cashFlowVec, cashFlowPeriod, compoundPeriod):
     return True
 
 
+# def calculate_NPV(r, cashFlowVec, cashFlowPeriod, compoundPeriod):
+#     NPV = 0
+#     for i, cf in enumerate(cashFlowVec):
+#         # Rate per compounding period
+#         rate_per_period = r * compoundPeriod / 12
+
+#         # Number of compounding periods until this cash flow
+#         num_periods = i * cashFlowPeriod / compoundPeriod
+
+#         # Calculate present value of this cash flow
+#         NPV += cf / ((1 + rate_per_period) ** num_periods)
+#     return NPV
 def calculate_NPV(r, cashFlowVec, cashFlowPeriod, compoundPeriod):
     NPV = 0
+    # 將 r 視為年化利率 → 換算為每個複利期的利率
+    rate_per_period = r / (12 / compoundPeriod)
+
     for i, cf in enumerate(cashFlowVec):
-        # Rate per compounding period
-        rate_per_period = r * compoundPeriod / 12
-
-        # Number of compounding periods until this cash flow
-        num_periods = i * cashFlowPeriod / compoundPeriod
-
-        # Calculate present value of this cash flow
+        # 計算到目前現金流的總期數
+        num_periods = (i * cashFlowPeriod) / compoundPeriod
         NPV += cf / ((1 + rate_per_period) ** num_periods)
     return NPV
 

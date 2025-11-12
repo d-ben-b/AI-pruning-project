@@ -18,7 +18,7 @@ def finetune(
     arch=None,
     target=None,
     patience=5,  # ✅ 新增：early stop 等待次數
-    min_delta=0.01,  # ✅ 新增：最小改善幅度 (以 top1 為準)
+    min_delta=1e-5,  # ✅ 新增：最小改善幅度 (以 top1 為準)
 ):
     """
     Fine-tune model with optional N:M pruning constraint.
