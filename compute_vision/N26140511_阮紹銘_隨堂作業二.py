@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl
-from matplotlib.font_manager import FontProperties
 
 # 方法 2: 若沒有可用字體，使用英文替代
 use_english_fallback = True
@@ -68,7 +66,6 @@ else:
 plt.axis("on")
 
 plt.tight_layout()
-# plt.show()  # 注释掉显示代码
 plt.savefig(
     "/home/ben/project/compute_vision/comparison_result.png",
     dpi=300,
@@ -76,4 +73,4 @@ plt.savefig(
 )  # 增加DPI以獲得更清晰的圖像
 
 # 保存處理後的圖像（確保使用絕對路徑）
-cv2.imwrite("/home/ben/project/compute_vision/processed_scream.png", binary_image)
+cv2.imwrite("/home/ben/project/compute_vision/processed_scream_.png", binary_image)

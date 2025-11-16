@@ -11,7 +11,7 @@ import segmentation_models_pytorch as smp
 from torchvision.models.segmentation import deeplabv3_resnet50
 from tqdm import tqdm
 import matplotlib.pyplot as plt
-from kaggle.ML_HW2.code.dataset import get_datasets
+from dataset import get_datasets
 
 # ==========================================================
 # 設定

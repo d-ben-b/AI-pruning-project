@@ -9,7 +9,7 @@ from torch.optim.lr_scheduler import CosineAnnealingLR
 from termcolor import colored
 import segmentation_models_pytorch as smp
 from tqdm import tqdm
-from dataset import get_datasets
+from kaggle.ML_HW2.code.dataset import get_datasets
 
 # ==========================================================
 # 設定

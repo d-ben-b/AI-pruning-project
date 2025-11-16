@@ -8,18 +8,17 @@ from torch.utils.data import random_split, DataLoader
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from termcolor import colored
 import segmentation_models_pytorch as smp
-from torchvision.models.segmentation import deeplabv3_resnet50
 from tqdm import tqdm
-import matplotlib.pyplot as plt
-from kaggle.ML_HW2.code.dataset import get_datasets
+from dataset import get_datasets
 
 # ==========================================================
 # 設定
 # ==========================================================
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-EPOCHS = 50
+EPOCHS = 100  # ✅ 延長訓練週期
 BATCH_SIZE = 8
-LR = 1e-4
+LR_ENCODER = 1e-5
+LR_DECODER = 1e-4
 NUM_CLASSES = 16
 SAVE_PATH = "./checkpoints"
 os.makedirs(SAVE_PATH, exist_ok=True)
@@ -39,23 +38,43 @@ train_loader = DataLoader(
 val_loader = DataLoader(val_subset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
 
 # ==========================================================
-# 模型、Loss、Optimizer、Scheduler
+# 模型定義 (U-Net++)
 # ==========================================================
-# model = deeplabv3_resnet50(weights=None, num_classes=NUM_CLASSES).to(DEVICE)
 model = smp.UnetPlusPlus(
-    encoder_name="resnet101",  # backbone
-    encoder_weights="imagenet",  # 使用 ImageNet 預訓練
-    in_channels=3,  # RGB input
-    classes=NUM_CLASSES,  # segmentation 類別數
+    encoder_name="resnet101",
+    encoder_weights="imagenet",
+    in_channels=3,
+    classes=NUM_CLASSES,
 ).to(DEVICE)
 
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=LR)
+# ==========================================================
+# 損失函數 (Hybrid Loss)
+# ==========================================================
+ce_loss = nn.CrossEntropyLoss()
+dice_loss = smp.losses.DiceLoss(mode="multiclass")
+
+
+def hybrid_loss(pred, target):
+    """CrossEntropy + Dice"""
+    return 0.5 * ce_loss(pred, target) + 0.5 * dice_loss(pred, target)
+
+
+# ==========================================================
+# 分組學習率 (encoder / decoder)
+# ==========================================================
+optimizer = optim.Adam(
+    [
+        {"params": model.encoder.parameters(), "lr": LR_ENCODER},
+        {"params": model.decoder.parameters(), "lr": LR_DECODER},
+        {"params": model.segmentation_head.parameters(), "lr": LR_DECODER},
+    ]
+)
+
 scheduler = CosineAnnealingLR(optimizer, T_max=EPOCHS, eta_min=1e-6)
 
 
 # ==========================================================
-# 計算 mIoU
+# mIoU 計算
 # ==========================================================
 def compute_iou(pred, mask, num_classes=NUM_CLASSES):
     pred = torch.argmax(pred, dim=1)
@@ -73,76 +92,63 @@ def compute_iou(pred, mask, num_classes=NUM_CLASSES):
 
 
 # ==========================================================
-# 訓練與驗證
+# 訓練主迴圈
 # ==========================================================
 best_miou = 0
-train_losses, val_mious, lrs = [], [], []
 history = {"train_loss": [], "val_miou": [], "lr": []}
 
 for epoch in range(EPOCHS):
     model.train()
-    total_loss = 0
+    total_loss = 0.0
 
     for imgs, masks in tqdm(
         train_loader, desc=f"Train {epoch+1}/{EPOCHS}", colour="green", leave=False
     ):
         imgs, masks = imgs.to(DEVICE), masks.to(DEVICE)
         optimizer.zero_grad()
-        # outputs = model(imgs)["out"]
         outputs = model(imgs)
-        loss = criterion(outputs, masks)
+        loss = hybrid_loss(outputs, masks)
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
 
     avg_loss = total_loss / len(train_loader)
-    train_losses.append(avg_loss)
 
-    # ======================================================
     # 驗證階段
-    # ======================================================
     model.eval()
     with torch.no_grad():
         miou_scores = []
         for imgs, masks in tqdm(
-            val_loader, desc=f"Val {epoch+1}/{EPOCHS}", colour="MAGENTA", leave=False
+            val_loader, desc=f"Val {epoch+1}/{EPOCHS}", colour="magenta", leave=False
         ):
             imgs, masks = imgs.to(DEVICE), masks.to(DEVICE)
-            # outputs = model(imgs)["out"]
             outputs = model(imgs)
             miou = compute_iou(outputs.cpu(), masks.cpu(), NUM_CLASSES)
             miou_scores.append(miou)
+        mean_miou = np.nanmean(miou_scores)
 
-    mean_miou = np.nanmean(miou_scores)
-    val_mious.append(mean_miou)
-
-    # ======================================================
-    # Scheduler + Print
-    # ======================================================
     scheduler.step()
     current_lr = scheduler.get_last_lr()[0]
-    lrs.append(current_lr)
 
     print(
         colored(
-            f"[Epoch {epoch+1:03d}] LR={current_lr:.2e} | Loss={avg_loss:.4f} | mIoU={mean_miou:.4f}",
+            f"[Epoch {epoch+1:03d}] LR={current_lr:.2e} | Loss={avg_loss:.4f} | Val mIoU={mean_miou:.4f}",
             "cyan",
         )
     )
+
     history["train_loss"].append(avg_loss)
     history["val_miou"].append(mean_miou)
     history["lr"].append(current_lr)
 
-    # 儲存最佳模型
+    # ✅ 儲存最佳模型
     if mean_miou > best_miou:
         best_miou = mean_miou
-        torch.save(
-            model.state_dict(), os.path.join(SAVE_PATH, "UnetPlusPlus_best_.pth")
-        )
+        torch.save(model.state_dict(), os.path.join(SAVE_PATH, "best_unetpp.pth"))
         print(colored(f"✅ Saved new best model (mIoU={best_miou:.4f})", "green"))
 
 print(colored(f"Training complete! Best mIoU={best_miou:.4f}", "yellow"))
 
-with open(os.path.join(SAVE_PATH, "training_log.json"), "w") as f:
+with open(os.path.join(SAVE_PATH, "training_log_unetpp.json"), "w") as f:
     json.dump(history, f)
-print(f"✅ Saved training log to {os.path.join(SAVE_PATH, 'training_log.json')}")
+print(f"✅ Saved training log to {os.path.join(SAVE_PATH, 'training_log_unetpp.json')}")
