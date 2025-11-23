@@ -1,0 +1,193 @@
+{
+  "project": "Lab3 Model Quantization",
+  "timestamp": null,
+  "environment": {
+    "python_version": null,
+    "pytorch_version": null,
+    "torchvision_version": null,
+    "quant_backend": "fbgemm",
+    "device_default": "cuda:0_or_cpu"
+  },
+  "dataset": {
+    "name": "CIFAR-10",
+    "root": "data/cifar10",
+    "batch_size": 64,
+    "num_workers": 4,
+    "pin_memory": true,
+    "split_ratio_val": 0.1,
+    "train_transform": [
+      "RandomCrop(32, padding=4)",
+      "RandomHorizontalFlip(p=0.5)",
+      "ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05)",
+      "RandomRotation(15)",
+      "RandAugment(num_ops=2, magnitude=9)",
+      "ToTensor()",
+      "RandomErasing(p=0.25, scale=(0.02, 0.2), ratio=(0.3, 3.3))",
+      "Normalize(mean=[0.4914,0.4822,0.4465], std=[0.247,0.243,0.261])"
+    ],
+    "eval_transform": [
+      "ToTensor()",
+      "Normalize(mean=[0.4914,0.4822,0.4465], std=[0.247,0.243,0.261])"
+    ]
+  },
+  "model": {
+    "name": "QuantizableResNet-50 (CIFAR-10 stem 3x3)",
+    "block": "QuantizableBottleneck",
+    "layers": [
+      3,
+      4,
+      6,
+      3
+    ],
+    "classifier": "Linear(512*expansion -> 10)",
+    "fuse_rules": {
+      "stem": [
+        "conv1",
+        "bn1",
+        "relu"
+      ],
+      "basic_block": [
+        [
+          "conv1",
+          "bn1",
+          "relu"
+        ],
+        [
+          "conv2",
+          "bn2"
+        ]
+      ],
+      "bottleneck_block": [
+        [
+          "conv1",
+          "bn1",
+          "relu1"
+        ],
+        [
+          "conv2",
+          "bn2",
+          "relu2"
+        ],
+        [
+          "conv3",
+          "bn3"
+        ]
+      ],
+      "downsample": [
+        "0",
+        "1"
+      ]
+    },
+    "skip_add_impl": "nn.quantized.FloatFunctional",
+    "quant_stubs": true
+  },
+  "training_fp32": {
+    "epochs": 50,
+    "optimizer": "SGD(nesterov=True)",
+    "lr": 0.01,
+    "momentum": 0.9,
+    "weight_decay": 0.0005,
+    "scheduler": "Warmup(10% epochs) -> CosineAnnealing",
+    "criterion": "CrossEntropyLoss",
+    "early_stopping": {
+      "enabled": true,
+      "patience": 10,
+      "min_delta": 1e-05,
+      "metric": "val_acc"
+    },
+    "seed": null
+  },
+  "ptq": {
+    "qconfig": {
+      "activation": {
+        "dtype": "quint8",
+        "qscheme": "per_tensor_symmetric"
+      },
+      "weight": {
+        "dtype": "qint8",
+        "qscheme": "per_tensor_symmetric"
+      },
+      "observer": "CusQuantObserver(MinMax + Po2 scale approximate)"
+    },
+    "prepare": "tq.prepare (eval+cpu)",
+    "calibration": {
+      "loader": "val_loader",
+      "device": "cpu",
+      "passes": 1,
+      "uses_eval_transform": true
+    },
+    "convert": "tq.convert (eval+cpu)",
+    "results": {
+      "fp32": {
+        "acc_%": 93.87,
+        "loss": 0.2645,
+        "file_size_mb": 94.41
+      },
+      "int8": {
+        "acc_%": 72.36,
+        "loss": 1.1730,
+        "file_size_mb": 23.66
+      },
+      "latency_ms": {
+        "fp32_cpu": 181.693,
+        "int8_cpu": 68.664,
+        "iters": 1000,
+        "warmup": 0
+      },
+      "speedup_x": 2.65,
+      "compression_x": 3.99
+    },
+    "notes": [
+      "對稱 per-tensor；未排除 conv1/fc 量化。",
+      "校準以驗證集單次 pass（eval_transform，無強增強）。"
+    ]
+  },
+  "qat": {
+    "epochs": 20,
+    "lr": 0.1,
+    "is_qat": true,
+    "prepare_qat": "tq.prepare_qat (train), fuse before prepare",
+    "observer_freeze_epoch_ratio": {
+      "disable_observer_at": 0.8,
+      "freeze_bn_at": 0.9
+    },
+    "qconfig": {
+      "activation": {
+        "dtype": "quint8",
+        "qscheme": "per_tensor_symmetric"
+      },
+      "weight": {
+        "dtype": "qint8",
+        "qscheme": "per_tensor_symmetric"
+      }
+    },
+    "results": {
+      "int8": {
+        "acc_%": 93.58,
+        "loss": 0.2723,
+        "file_size_mb": 23.66
+      },
+      "latency_ms": {
+        "fp32_cpu": 181.988,
+        "int8_cpu": 69.092,
+        "iters": 1000,
+        "warmup": 0
+      },
+      "speedup_x": 2.63,
+      "compression_x": 3.99
+    },
+    "status": "completed"
+  },
+  "artifacts": {
+    "paths": {
+      "fp32_weight": "./weights/best_resnet50_cifar10.pth",
+      "ptq_int8_weight": "./weights/PTQ_resnet50_cifar10.pth",
+      "qat_int8_weight": "./weights/QAT_resnet50_cifar10.pth",
+      "plots": {
+        "train_val_loss_acc": "./results/loss_accuracy.png",
+        "train_val_loss_acc_qat": "./results/QAT_loss_accuracy.png",
+        "confusion_matrix": "./results/confusion_matrix.png"
+      }
+    }
+  }
+}
