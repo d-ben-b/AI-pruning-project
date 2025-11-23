@@ -1,6 +1,5 @@
 data
 index_cache/
-EAI
 .venv
 __pycache__
 *.pth
