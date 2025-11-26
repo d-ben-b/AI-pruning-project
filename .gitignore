@@ -7,3 +7,5 @@ __pycache__
 pred_*
 TVM
 ml_lectures
+*.pt
+dataset
