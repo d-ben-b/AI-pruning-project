@@ -14,8 +14,8 @@ from torch.utils.data import DataLoader
 from torchvision import transforms, datasets
 
 SEED = 43
-BATCH_SIZE = 256
-EPOCHS = 10
+BATCH_SIZE = 64
+EPOCHS = 20
 PATIENCE = 5
 LEARNING_RATE = 0.001
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -172,6 +172,12 @@ def train_model(
     # -------- Logging Start --------
     with open(log_path, "a", encoding="utf-8") as f:
         f.write(f"\n==== Theme2 Training Start {datetime.now()} ====\n")
+        f.write(f"Model: {model.__class__.__name__}\n")
+        f.write(f"Batch Size: {BATCH_SIZE}\n")
+        f.write(f"Learning Rate: {lr}\n")
+        f.write(f"Patience: {patience}\n")
+        f.write(f"Epochs: {epochs}\n")
+        f.write("\n")
 
     # -------- Training Loop --------
     for epoch in range(epochs):
@@ -300,3 +306,12 @@ for name, model in models.items():
 for name, r in results.items():
     print("\nTesting", name)
     evaluate_test(r["model"])
+
+
+for name, r in results.items():
+    plot_curve(
+        r["train_losses"], r["val_losses"], r["val_accs"],
+        f"/home/ben/project/compute_vision/midtern_project/Theme2/out/{name}_curve.png"
+    )
+for name, r in results.items():
+    plot_cm(r["model"], f"/home/ben/project/compute_vision/midtern_project/Theme2/out/{name}_cm.png")

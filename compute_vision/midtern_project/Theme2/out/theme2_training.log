@@ -1,1 +1,112 @@
 ==== Theme2 Training Start 2025-11-27 10:42:32.997246 ====
+[33mEpoch 1/10 | [32mTrain Loss: 1.0553 | [36mVal Loss: 0.9269 | [35mVal Acc: 0.6456[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+[33mEpoch 2/10 | [32mTrain Loss: 0.8355 | [36mVal Loss: 0.8971 | [35mVal Acc: 0.6673[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+[33mEpoch 3/10 | [32mTrain Loss: 0.7590 | [36mVal Loss: 0.7589 | [35mVal Acc: 0.7149[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+[33mEpoch 4/10 | [32mTrain Loss: 0.7016 | [36mVal Loss: 0.7795 | [35mVal Acc: 0.7073[0m
+[33mEpoch 5/10 | [32mTrain Loss: 0.6483 | [36mVal Loss: 0.7443 | [35mVal Acc: 0.7164[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+[33mEpoch 6/10 | [32mTrain Loss: 0.6032 | [36mVal Loss: 0.7084 | [35mVal Acc: 0.7378[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+[33mEpoch 7/10 | [32mTrain Loss: 0.5588 | [36mVal Loss: 0.7124 | [35mVal Acc: 0.7429[0m
+[33mEpoch 8/10 | [32mTrain Loss: 0.5198 | [36mVal Loss: 0.7044 | [35mVal Acc: 0.7441[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+[33mEpoch 9/10 | [32mTrain Loss: 0.4803 | [36mVal Loss: 0.7934 | [35mVal Acc: 0.7312[0m
+[33mEpoch 10/10 | [32mTrain Loss: 0.4418 | [36mVal Loss: 0.7370 | [35mVal Acc: 0.7479[0m
+==== Training End ====
+
+
+==== Theme2 Training Start 2025-11-27 14:20:27.356403 ====
+
+==== Theme2 Training Start 2025-11-27 15:25:16.600079 ====
+Model: ResNet
+Batch Size: 64
+Learning Rate: 0.001
+Patience: 5
+Epochs: 10
+
+[33mEpoch 1/10 | [32mTrain Loss: 1.1068 | [36mVal Loss: 1.0428 | [35mVal Acc: 0.6095[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+[33mEpoch 2/10 | [32mTrain Loss: 0.9055 | [36mVal Loss: 0.8700 | [35mVal Acc: 0.6673[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+[33mEpoch 3/10 | [32mTrain Loss: 0.8308 | [36mVal Loss: 0.7944 | [35mVal Acc: 0.7071[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+[33mEpoch 4/10 | [32mTrain Loss: 0.7720 | [36mVal Loss: 0.7621 | [35mVal Acc: 0.7057[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+[33mEpoch 5/10 | [32mTrain Loss: 0.7221 | [36mVal Loss: 0.7793 | [35mVal Acc: 0.7137[0m
+[33mEpoch 6/10 | [32mTrain Loss: 0.6725 | [36mVal Loss: 0.7130 | [35mVal Acc: 0.7318[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+[33mEpoch 7/10 | [32mTrain Loss: 0.6346 | [36mVal Loss: 0.7280 | [35mVal Acc: 0.7328[0m
+[33mEpoch 8/10 | [32mTrain Loss: 0.5818 | [36mVal Loss: 0.7011 | [35mVal Acc: 0.7455[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+[33mEpoch 9/10 | [32mTrain Loss: 0.5398 | [36mVal Loss: 0.7229 | [35mVal Acc: 0.7340[0m
+[33mEpoch 10/10 | [32mTrain Loss: 0.4992 | [36mVal Loss: 0.6687 | [35mVal Acc: 0.7599[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/resnet18_t2.pth
+==== Training End ====
+
+
+==== Theme2 Training Start 2025-11-27 15:47:30.019305 ====
+Model: EfficientNet
+Batch Size: 64
+Learning Rate: 0.001
+Patience: 5
+Epochs: 10
+
+[33mEpoch 1/10 | [32mTrain Loss: 1.0112 | [36mVal Loss: 0.8476 | [35mVal Acc: 0.6796[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/effnet_b0_t2.pth
+[33mEpoch 2/10 | [32mTrain Loss: 0.8058 | [36mVal Loss: 0.7691 | [35mVal Acc: 0.7113[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/effnet_b0_t2.pth
+[33mEpoch 3/10 | [32mTrain Loss: 0.7258 | [36mVal Loss: 0.7444 | [35mVal Acc: 0.7194[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/effnet_b0_t2.pth
+[33mEpoch 4/10 | [32mTrain Loss: 0.6687 | [36mVal Loss: 0.7251 | [35mVal Acc: 0.7286[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/effnet_b0_t2.pth
+[33mEpoch 5/10 | [32mTrain Loss: 0.6166 | [36mVal Loss: 0.7054 | [35mVal Acc: 0.7399[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/effnet_b0_t2.pth
+[33mEpoch 6/10 | [32mTrain Loss: 0.5711 | [36mVal Loss: 0.6758 | [35mVal Acc: 0.7493[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/effnet_b0_t2.pth
+[33mEpoch 7/10 | [32mTrain Loss: 0.5263 | [36mVal Loss: 0.6475 | [35mVal Acc: 0.7678[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/effnet_b0_t2.pth
+[33mEpoch 8/10 | [32mTrain Loss: 0.4865 | [36mVal Loss: 0.6622 | [35mVal Acc: 0.7573[0m
+[33mEpoch 9/10 | [32mTrain Loss: 0.4473 | [36mVal Loss: 0.6887 | [35mVal Acc: 0.7692[0m
+[33mEpoch 10/10 | [32mTrain Loss: 0.4041 | [36mVal Loss: 0.7042 | [35mVal Acc: 0.7734[0m
+==== Training End ====
+
+
+==== Theme2 Training Start 2025-11-27 16:16:41.315215 ====
+Model: SimpleCNN
+Batch Size: 64
+Learning Rate: 0.001
+Patience: 5
+Epochs: 10
+
+[33mEpoch 1/10 | [32mTrain Loss: 1.5290 | [36mVal Loss: 1.3265 | [35mVal Acc: 0.4912[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/simplecnn_t2.pth
+[33mEpoch 2/10 | [32mTrain Loss: 1.2611 | [36mVal Loss: 1.1905 | [35mVal Acc: 0.5430[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/simplecnn_t2.pth
+[33mEpoch 3/10 | [32mTrain Loss: 1.1564 | [36mVal Loss: 1.1040 | [35mVal Acc: 0.5715[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/simplecnn_t2.pth
+[33mEpoch 4/10 | [32mTrain Loss: 1.0803 | [36mVal Loss: 1.0449 | [35mVal Acc: 0.6006[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/simplecnn_t2.pth
+[33mEpoch 5/10 | [32mTrain Loss: 1.0272 | [36mVal Loss: 1.0486 | [35mVal Acc: 0.6014[0m
+[33mEpoch 6/10 | [32mTrain Loss: 0.9798 | [36mVal Loss: 1.0193 | [35mVal Acc: 0.6133[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/simplecnn_t2.pth
+[33mEpoch 7/10 | [32mTrain Loss: 0.9471 | [36mVal Loss: 0.9805 | [35mVal Acc: 0.6326[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/simplecnn_t2.pth
+[33mEpoch 8/10 | [32mTrain Loss: 0.9127 | [36mVal Loss: 0.9761 | [35mVal Acc: 0.6350[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/simplecnn_t2.pth
+[33mEpoch 9/10 | [32mTrain Loss: 0.8781 | [36mVal Loss: 0.9707 | [35mVal Acc: 0.6404[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/simplecnn_t2.pth
+[33mEpoch 10/10 | [32mTrain Loss: 0.8530 | [36mVal Loss: 0.9703 | [35mVal Acc: 0.6396[0m
+[Save] Best model saved: /home/ben/project/compute_vision/midtern_project/Theme2/out/simplecnn_t2.pth
+==== Training End ====
+
+
+==== Theme2 Training Start 2025-11-27 21:13:53.441637 ====
+Model: ResNet
+Batch Size: 64
+Learning Rate: 0.001
+Patience: 5
+Epochs: 20
+
