@@ -1,0 +1,14 @@
+==== Theme2 Training Start 2025-11-26 22:57:10.663108 ====
+[33mEpoch 1/10 | [32mTrain Loss: 1.0722 | [36mVal Loss: 0.9138 | [35mVal Acc: 0.6583[0m
+[Save] Best model saved: ./out/resnet18_t2.pth
+[33mEpoch 2/10 | [32mTrain Loss: 0.8394 | [36mVal Loss: 0.8317 | [35mVal Acc: 0.6816[0m
+[Save] Best model saved: ./out/resnet18_t2.pth
+[33mEpoch 3/10 | [32mTrain Loss: 0.7590 | [36mVal Loss: 0.8471 | [35mVal Acc: 0.6828[0m
+[33mEpoch 4/10 | [32mTrain Loss: 0.6997 | [36mVal Loss: 0.7902 | [35mVal Acc: 0.6943[0m
+[Save] Best model saved: ./out/resnet18_t2.pth
+
+==== Theme2 Training Start 2025-11-27 10:35:06.700162 ====
+
+==== Theme2 Training Start 2025-11-27 10:41:13.934389 ====
+
+==== Theme2 Training Start 2025-11-27 10:42:32.997246 ====

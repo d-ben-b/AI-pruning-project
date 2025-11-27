@@ -8,4 +8,6 @@ pred_*
 TVM
 ml_lectures
 *.pt
+*.pth
 dataset
+
