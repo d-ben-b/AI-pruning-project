@@ -17,6 +17,15 @@ The dataset consists of images belonging to 3 classes: **Rock**, **Paper**, and 
 *   **Validation Set**: 33 images
 *   **Test Set**: 372 images
 
+**Paper**
+![Rock Paper Scissors Dataset](./Theme1/data/Rock-Paper-Scissors/validation/paper/paper2.png)
+
+**Rock**
+![Rock Paper Scissors Dataset](./Theme1/data/Rock-Paper-Scissors/validation/rock/rock2.png)
+
+**Scissors**
+![Rock Paper Scissors Dataset](./Theme1/data/Rock-Paper-Scissors/validation/scissors/scissors2.png)
+
 ### 2.2 Model Architecture & Training Method
 We implemented three models:
 *   **ResNet18**: A residual learning framework to ease the training of networks that are substantially deeper than those used previously. Pre-trained on ImageNet.
@@ -40,23 +49,23 @@ We implemented three models:
 
 #### Training Curves
 **ResNet18**
-![ResNet18 Curve](Theme1/out/resnet18_curve.png)
+![ResNet18 Curve](./Theme1/out/resnet18_curve.png)
 
 **EfficientNet-B0**
-![EfficientNet-B0 Curve](Theme1/out/effnet_b0_curve.png)
+![EfficientNet-B0 Curve](./Theme1/out/effnet_b0_curve.png)
 
 **SimpleCNN**
-![SimpleCNN Curve](Theme1/out/simplecnn_curve.png)
+![SimpleCNN Curve](./Theme1/out/simplecnn_curve.png)
 
 #### Confusion Matrix
 **ResNet18**
-![ResNet18 CM](Theme1/out/resnet18_cm.png)
+![ResNet18 CM](./Theme1/out/resnet18_cm.png)
 
 **EfficientNet-B0**
-![EfficientNet-B0 CM](Theme1/out/effnet_b0_cm.png)
+![EfficientNet-B0 CM](./Theme1/out/effnet_b0_cm.png)
 
 **SimpleCNN**
-![SimpleCNN CM](Theme1/out/simplecnn_cm.png)
+![SimpleCNN CM](./Theme1/out/simplecnn_cm.png)
 
 ### 2.4 Model Performance Analysis
 All three models achieved near-perfect accuracy (100%) on the validation set. This suggests that the "Rock Paper Scissors" dataset is relatively simple with distinct features for each class, or the validation set is small and easy to classify. Even the simple custom CNN was able to learn the features effectively.
@@ -73,6 +82,27 @@ The dataset consists of facial images categorized into 7 emotions: **Angry, Disg
 *   **Training Set**: 39,822 images
 *   **Validation Set**: 4,978 images
 *   **Test Set**: 4,979 images
+
+**Angry**
+![Rock Paper Scissors Dataset](./Theme2/data/train/angry/angry_00000.jpg)
+
+**Disgust**
+![Rock Paper Scissors Dataset](./Theme2/data/train/disgust/disgust_00000.jpg)
+
+**Fear**
+![Rock Paper Scissors Dataset](./Theme2/data/train/fear/fear_00000.jpg)
+
+**Happy**
+![Rock Paper Scissors Dataset](./Theme2/data/train/happy/happy_01416.jpg)
+
+**Neutral**
+![Rock Paper Scissors Dataset](./Theme2/data/train/neutral/neutral_00000.jpg)
+
+**Sad**
+![Rock Paper Scissors Dataset](./Theme2/data/train/sad/sad_00000.jpg)
+
+**Surprise**
+![Rock Paper Scissors Dataset](./Theme2/data/train/surprise/surprise_00000.jpg)
 
 ### 3.2 Model Architecture & Training Method
 The same three architectures were used as in Theme 1, but adapted for 7 classes.
