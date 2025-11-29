@@ -5,6 +5,7 @@ from colorama import Fore, Style, init
 init(autoreset=True)
 from tqdm.auto import tqdm
 import torch
+import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
 from datetime import datetime
@@ -12,6 +13,8 @@ from torchvision.models import resnet18, ResNet18_Weights
 from torchvision.models import efficientnet_b0, EfficientNet_B0_Weights
 from torch.utils.data import DataLoader
 from torchvision import transforms, datasets
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+
 
 SEED = 43
 BATCH_SIZE = 64
