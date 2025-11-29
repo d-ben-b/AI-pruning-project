@@ -28,9 +28,21 @@ The dataset consists of images belonging to 3 classes: **Rock**, **Paper**, and 
 
 ### 2.2 Model Architecture & Training Method
 We implemented three models:
-*   **ResNet18**: A residual learning framework to ease the training of networks that are substantially deeper than those used previously. Pre-trained on ImageNet.
-*   **EfficientNet-B0**: A model that balances network depth, width, and resolution for better efficiency. Pre-trained on ImageNet.
-*   **SimpleCNN**: A custom 3-layer Convolutional Neural Network with Max Pooling and Fully Connected layers.
+
+-   **ResNet18**: A residual learning framework to ease the training of networks that are substantially deeper than those used previously. Pre-trained on ImageNet.
+
+**ResNet18 Architecture**
+![alt text](image.png)
+
+-   **EfficientNet-B0**: A model that balances network depth, width, and resolution for better efficiency. Pre-trained on ImageNet.
+
+**EfficientNet-B0 Architecture**
+![alt text](EfficientNet-Architecture-diagram.png)
+
+-   **SimpleCNN**: A custom 3-layer Convolutional Neural Network with Max Pooling and Fully Connected layers.
+
+**SimpleCNN Architecture**
+![alt text](image-1.png)
 
 #### Hyperparameters
 *   **Epochs**: 10
