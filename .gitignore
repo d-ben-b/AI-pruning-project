@@ -1,6 +1,6 @@
 data
 index_cache/
-.venv
+.venv*
 __pycache__
 *.pth
 *.csv
@@ -10,4 +10,6 @@ ml_lectures
 *.pt
 *.pth
 dataset
+ZIP
+*data*
 
