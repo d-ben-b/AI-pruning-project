@@ -31,6 +31,8 @@ The following screenshot demonstrates the inference comparison output:
 **Observation:**
 Contrary to the typical expectation that quantization accelerates inference, the observed **INT8 inference speed (6.42 ms) is slower than FP32 (2.01 ms)** in this specific environment.
 
+In the compare_fp32_int8 function, I compute the top-3 class probabilities for both FP32 and INT8 models and measure their inference time. In the Gradio UI, I display the top-3 predictions of each model and show a textual summary of the latency and speedup.
+
 **Reasoning:**
 This performance degradation (0.31x speedup) suggests that the hardware used for this test may not natively support INT8 acceleration instructions. When hardware support is absent, the overhead of quantizing and dequantizing data (or handling INT8 operations via software emulation) can outweigh the benefits of reduced memory bandwidth, leading to increased latency.
 
