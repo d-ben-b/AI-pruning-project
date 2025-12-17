@@ -25,13 +25,16 @@ def main():
             "deit_base_patch16_224",
             "deit_tiny_distilled_patch16_224",
             "deit_small_distilled_patch16_224",
-            "deit_base_distilled_patch16_224 ",
+            "deit_base_distilled_patch16_224",
         ]
     else:
         archs = [args.arch]
 
     # === 要分別測試剪的四種 Layer ===
-    prune_targets = ["attn.qkv", "attn.proj", "mlp.fc1", "mlp.fc2"]
+    if args.prune_target[0] == "all":
+        prune_targets = ["attn.qkv", "attn.proj", "mlp.fc1", "mlp.fc2"]
+    else:
+        prune_targets = [args.prune_target]
 
     for arch in archs:
         print(f"\n🚀 Model {arch} start pruning experiments...")
@@ -59,75 +62,69 @@ def main():
         print(f"💾 Saved baseline model to {base_ckpt}")
 
         # Initialize pruner and prune
-        for target in prune_targets:
-            print(f"\n============================")
-            print(f"✂️ Pruning target: {target}")
-            print(f"============================")
+        target = prune_targets
+        print(f"\n============================")
+        print(f"✂️ Pruning target: {target}")
+        print(f"============================")
 
-            model.load_state_dict(torch.load(base_ckpt, map_location=args.device))
+        model.load_state_dict(torch.load(base_ckpt, map_location=args.device))
 
-            pruner = NMPruner(model, N=args.n, M=args.m, targets=[target])
-            pruner.compute_masks()
-            pruner.apply_once()
-            pruner.attach_gradient_hooks()
+        pruner = NMPruner(model, N=args.n, M=args.m, targets=target)
+        pruner.compute_masks()
+        pruner.apply_once()
+        pruner.attach_gradient_hooks()
 
-            # Check density
-            overall_density, layer_stats = pruner.density_stats()
-            print(f"Overall density after pruning: {overall_density:.4f}")
-            log_per_layer(
-                layer_stats, args.out, arch=arch, n=args.n, m=args.m, tag=target
-            )
+        # Check density
+        overall_density, layer_stats = pruner.density_stats()
+        print(f"Overall density after pruning: {overall_density:.4f}")
+        log_per_layer(layer_stats, args.out, arch=arch, n=args.n, m=args.m, tag=target)
 
-            # Check N:M compliance
-            compliance = pruner.nm_compliance()
-            print("N:M compliance per layer:", compliance)
+        # Check N:M compliance
+        compliance = pruner.nm_compliance()
+        print("N:M compliance per layer:", compliance)
 
-            # Save pruned model
-            pruned_ckpt = (
-                Path(args.out) / f"{arch}_{target.replace('.', '_')}_pruned.pth"
-            )
-            torch.save(model.state_dict(), pruned_ckpt)
-            print(f"💾 Saved pruned model to {pruned_ckpt}")
+        # Save pruned model
+        pruned_ckpt = Path(args.out) / f"{arch}_{target.replace('.', '_')}_pruned.pth"
+        torch.save(model.state_dict(), pruned_ckpt)
+        print(f"💾 Saved pruned model to {pruned_ckpt}")
 
-            # Rewind to the specified point
-            load_rewind_point(model, optimizer, rewind_path, map_location=args.device)
-            print(f"Model rewound to {args.rewind_tag} state.")
+        # Rewind to the specified point
+        load_rewind_point(model, optimizer, rewind_path, map_location=args.device)
+        print(f"Model rewound to {args.rewind_tag} state.")
 
-            # Finetune
-            finetune(
-                model,
-                train_loader,
-                val_loader,
-                epochs=args.finetune_epochs,
-                lr=args.finetune_lr,
-                device=args.device,
-                out_dir=args.out,
-                pruner=pruner,
-                arch=arch,
-                target=target,
-            )
+        # Finetune
+        finetune(
+            model,
+            train_loader,
+            val_loader,
+            epochs=args.finetune_epochs,
+            lr=args.finetune_lr,
+            device=args.device,
+            out_dir=args.out,
+            pruner=pruner,
+            arch=arch,
+            target=target,
+        )
 
-            # Final evaluation
-            final_metrics = evaluate(model, val_loader, device=args.device)
-            print(f"Final Top-1 after finetuning: {final_metrics['top1']:.2f}%")
+        # Final evaluation
+        final_metrics = evaluate(model, val_loader, device=args.device)
+        print(f"Final Top-1 after finetuning: {final_metrics['top1']:.2f}%")
 
-            # Log experiment results
-            log_per_layer(
-                layer_stats, args.out, arch=arch, n=args.n, m=args.m, tag=target
-            )
-            log_experiment(
-                exp_csv,
-                {
-                    "arch": arch,
-                    "baseline_top1": baseline_metrics["top1"],
-                    "final_top1": final_metrics["top1"],
-                    "density": overall_density,
-                    "n": args.n,
-                    "m": args.m,
-                    "epochs": args.finetune_epochs,
-                    "lr": args.finetune_lr,
-                },
-            )
+        # Log experiment results
+        log_per_layer(layer_stats, args.out, arch=arch, n=args.n, m=args.m, tag=target)
+        log_experiment(
+            exp_csv,
+            {
+                "arch": arch,
+                "baseline_top1": baseline_metrics["top1"],
+                "final_top1": final_metrics["top1"],
+                "density": overall_density,
+                "n": args.n,
+                "m": args.m,
+                "epochs": args.finetune_epochs,
+                "lr": args.finetune_lr,
+            },
+        )
         plot_results(args.out)
         print(f"\n🎉 Completed all layer pruning tests for {arch}.")
 

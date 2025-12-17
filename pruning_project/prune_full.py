@@ -25,7 +25,7 @@ def main():
             "deit_base_patch16_224",
             "deit_tiny_distilled_patch16_224",
             "deit_small_distilled_patch16_224",
-            "deit_base_distilled_patch16_224 ",
+            "deit_base_distilled_patch16_224",
         ]
     else:
         archs = [args.arch]

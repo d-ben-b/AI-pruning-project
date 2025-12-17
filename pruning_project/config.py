@@ -5,6 +5,12 @@ def get_config():
     parser = argparse.ArgumentParser(description="Configuration for pruning project")
     parser.add_argument("--arch", default="all", type=str, help="Model architecture")
     parser.add_argument(
+        "--prune_target",
+        nargs="+",  # 允許輸入多個參數，並自動存成 List
+        default=["all"],  # 預設值改為 List
+        help="Layer to prune",
+    )
+    parser.add_argument(
         "--no-pretrained", action="store_true", help="Do not use pretrained weights"
     )
     parser.add_argument("--data_path", type=str, default="/homes/nfs/Parker/ImageNet/")
