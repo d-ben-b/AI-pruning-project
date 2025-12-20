@@ -1,0 +1,18 @@
+Paper Readings and Review
+• Reading reviews are free of format
+• But the following review questions guide you through the paper reading
+process.
+• What are the motivations for this work?
+• What is the proposed solution?
+• What is the work’s evaluation of the proposed solution?
+• What is your analysis of the identified problem, idea, and evaluation?
+• What are future directions for this research?
+• What questions are you left with?
+
+Requirement
+• Choose at least one or more papers
+• From recommended paper list
+• Or any other paper as long as it related to the topics
+• Summarize and write paper review in word/latex format
+• LaTeX format is highly recommended
+• Hand in compiled pdf files on moodle

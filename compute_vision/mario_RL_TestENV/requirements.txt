@@ -1,0 +1,7 @@
+Numpy==1.25
+torch==2.5.1
+gym==0.26.2
+gym-super-mario-bros==7.3.0
+opencv-python
+jupyter
+matplotlib

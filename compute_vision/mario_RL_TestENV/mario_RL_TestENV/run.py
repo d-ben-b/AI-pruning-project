@@ -1,4 +1,6 @@
 import os
+import pyglet
+pyglet.options['headless'] = True
 import numpy as np
 import random
 import torch
@@ -57,7 +59,7 @@ MEMORY_SIZE = 10000
 EPSILON_END = 0.3
 TARGET_UPDATE = 50
 TOTAL_TIMESTEPS = 1000000
-VISUALIZE = True  # 建議先 False，避免 render 影響訓練/相容性
+VISUALIZE = True  # Recording enabled (saved to videos/)
 MAX_STAGNATION_STEPS = 80
 
 # 🔑 自動判斷 CPU / GPU
@@ -106,6 +108,7 @@ for timestep in tqdm(range(1, TOTAL_TIMESTEPS + 1), desc="Training Progress"):
     cumulative_custom_reward = 0
     cumulative_reward = 0 
     stagnation_time = 0
+    frames = [] # Initialize frame buffer for video recording
     while not done:
         action = dqn.take_action(state)
 
@@ -159,7 +162,14 @@ for timestep in tqdm(range(1, TOTAL_TIMESTEPS + 1), desc="Training Progress"):
         step += 1
 
         if VISUALIZE:
-            env.render()
+            try:
+                # Capture frame for video recording
+                frame = env.render(mode='rgb_array')
+                # Ensure frame is contiguous and in correct format
+                frame = np.ascontiguousarray(frame, dtype=np.uint8)
+                frames.append(frame)
+            except Exception as e:
+                pass # Squelch render errors if any
 
     # Print cumulative reward for the current timestep
     print(f"Timestep {timestep} - Total Reward: {cumulative_reward} - Total Custom Reward: {cumulative_custom_reward}")
@@ -169,5 +179,24 @@ for timestep in tqdm(range(1, TOTAL_TIMESTEPS + 1), desc="Training Progress"):
         model_path = os.path.join("ckpt",f"step_{timestep}_reward_{int(best_reward)}_custom_{int(cumulative_custom_reward)}.pth")
         torch.save(dqn.q_net.state_dict(), model_path)
         print(f"Model saved: {model_path}")
+
+    # Video Saving Logic
+    if VISUALIZE and len(frames) > 0:
+        height, width, layers = frames[0].shape
+        size = (width, height)
+        # Ensure videos directory exists
+        video_dir = "videos"
+        os.makedirs(video_dir, exist_ok=True)
+        
+        out_path = os.path.join(video_dir, f"episode_{timestep}.avi")
+        # Use MJPG codec for high compatibility (produces larger files but works almost everywhere)
+        out = cv2.VideoWriter(out_path, cv2.VideoWriter_fourcc(*'MJPG'), 30, size)
+        
+        for i in range(len(frames)):
+            # Convert RGB to BGR for OpenCV
+            if frames[i].shape == (height, width, layers):
+                 out.write(cv2.cvtColor(frames[i], cv2.COLOR_RGB2BGR))
+        out.release()
+        print(f"Video saved: {out_path}")
 
 env.close()
