@@ -14,8 +14,8 @@ The paper does not propose a new pruning algorithm *per se*, but rather a new **
 
 *   **Training from Scratch**: They propose to discard the bits of "wisdom" that suggest fine-tuning is required. Instead, they take the *architecture* resulting from a pruning algorithm and train it from random initialization ("from scratch").
 *   **Fair Comparison Baselines**: They introduce strict control benchmarks:
-    *   **Scratch-E**: Training the pruned model for the same number of epochs as the large model.
-    *   **Scratch-B**: Training the pruned model for the same computational budget (FLOPs) as the large model (typically allowing for more epochs since the model is smaller).
+*   **Scratch-E**: Training the pruned model for the same number of epochs as the large model.
+*   **Scratch-B**: Training the pruned model for the same computational budget (FLOPs) as the large model (typically allowing for more epochs since the model is smaller).
 
 They apply this methodology across various state-of-the-art pruning methods, including:
 *   **Predefined Structured Pruning** (e.g., L1-norm based filter pruning).
