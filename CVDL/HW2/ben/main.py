@@ -90,7 +90,6 @@ class MainWindow(QMainWindow):
         """1.1 Load Model And Show Model Structure [cite: 72, 73]"""
         model = get_faster_rcnn()
         print(model) # 輸出到 Terminal
-        # 你也可以選擇顯示一個簡單的訊息框告訴使用者「已輸出到 Terminal」
 
     def q1_2_show_loss(self):
         """1.2 Show Training Loss [cite: 82]"""

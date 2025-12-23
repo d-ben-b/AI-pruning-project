@@ -28,5 +28,5 @@ def get_faster_rcnn():
     Q1.1: 載入 Faster R-CNN 模型
     設定 num_classes = 21 (20 類別 + 1 背景)
     """
-    model = models.detection.fasterrcnn_resnet50_fpn(weights=None, weights_backbone=None, num_classes=21)
+    model = models.detection.fasterrcnn_resnet50_fpn(num_classes=21)
     return model

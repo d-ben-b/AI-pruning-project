@@ -90,8 +90,8 @@ if __name__ == "__main__":
     # --- 參數設定 ---
     DATA_ROOT = "./data/1/VOCtrainval_06-Nov-2007/VOCdevkit/VOC2007"
     BATCH_SIZE = 4
-    NUM_EPOCHS = 200
-    LEARNING_RATE = 0.005
+    NUM_EPOCHS = 100
+    LEARNING_RATE = 1E-3
     
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     print(f"Using device: {device}")
@@ -99,6 +99,8 @@ if __name__ == "__main__":
     # --- 準備資料 ---
     data_transform = transforms.Compose([
         transforms.ToTensor(),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+        transforms.RandomGrayscale(p=0.1),
     ])
     
     if os.path.exists(DATA_ROOT):
@@ -119,9 +121,10 @@ if __name__ == "__main__":
 
     # --- 設定 Optimizer 與 Scheduler ---
     params = [p for p in model.parameters() if p.requires_grad]
-    optimizer = optim.Adam(params, lr=LEARNING_RATE, weight_decay=0.0005)
+    optimizer = optim.SGD(params, lr=LEARNING_RATE, momentum=0.9, weight_decay=0.0005)
     
-    lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
+    # StepLR step_size=30 (assuming 100 epochs, drop every 30)
+    lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
 
     # --- 訓練迴圈 ---
     loss_history = []
