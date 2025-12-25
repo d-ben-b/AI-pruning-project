@@ -14,7 +14,7 @@ from model import get_faster_rcnn
 from utils import set_seed
 
 # 設定隨機種子
-set_seed(9966)
+set_seed(4652)
 
 # ==========================================
 # 1. 定義資料集 (Dataset)
