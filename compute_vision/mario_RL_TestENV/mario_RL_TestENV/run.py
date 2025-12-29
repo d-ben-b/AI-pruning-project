@@ -188,7 +188,8 @@ for timestep in tqdm(range(1, TOTAL_TIMESTEPS + 1), desc="Training Progress"):
         video_dir = "videos"
         os.makedirs(video_dir, exist_ok=True)
         
-        out_path = os.path.join(video_dir, f"episode_{timestep}.avi")
+        # out_path = os.path.join(video_dir, f"episode_{timestep}.avi")
+        out_path = os.path.join(video_dir, f"last_episode.avi")
         # Use MJPG codec for high compatibility (produces larger files but works almost everywhere)
         out = cv2.VideoWriter(out_path, cv2.VideoWriter_fourcc(*'MJPG'), 30, size)
         
